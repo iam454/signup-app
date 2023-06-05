@@ -22,103 +22,57 @@ const pw = document.getElementById("pw");
 const pwCheck = document.getElementById("pw-check");
 const submit = document.getElementById("submit");
 
-// ID : 5~20자(영문 소문자, 숫자, _, -)
 const ID_REG = new RegExp("^[a-z0-9_-]{5,20}$");
-
-const idMsg = document.getElementById("id-msg");
-const ID_ERROR_MSG = {
-  required: "필수 정보입니다.",
-  invalid: "5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.",
-};
-
-const checkIdRegex = (value) => {
-  if (value.length === 0) {
-    return "required";
-  } else {
-    return ID_REG.test(value) ? true : "invalid";
-  }
-};
-
-const checkIdValidation = (value) => {
-  const isValidId = checkIdRegex(value);
-  if (isValidId !== true) {
-    id.classList.add("border-red-600");
-    idMsg.innerText = ID_ERROR_MSG[isValidId];
-  } else {
-    id.classList.remove("border-red-600");
-    idMsg.innerText = "";
-  }
-  return isValidId;
-};
-
-id.addEventListener("focusout", (e) => checkIdValidation(e.target.value));
-
-// PW : 8~16자(영문 대/소문자, 숫자)
 const PW_REG = new RegExp("^[a-zA-Z0-9]{8,16}$");
 
+const idMsg = document.getElementById("id-msg");
 const pwMsg = document.getElementById("pw-msg");
-const PW_ERROR_MSG = {
-  required: "필수 정보입니다.",
-  invalid: "8~16자 영문 대 소문자, 숫자를 사용하세요.",
-};
-
-const checkPwRegex = (value) => {
-  if (value.length === 0) {
-    return "required";
-  } else {
-    return PW_REG.test(value) ? true : "invalid";
-  }
-};
-
-const checkPwValidation = (value) => {
-  const isValidPw = checkPwRegex(value);
-  if (isValidPw !== true) {
-    pw.classList.add("border-red-600");
-    pwMsg.innerText = PW_ERROR_MSG[isValidPw];
-  } else {
-    pw.classList.remove("border-red-600");
-    pwMsg.innerText = "";
-  }
-  return isValidPw;
-};
-
-pw.addEventListener("focusout", (e) => checkPwValidation(e.target.value));
-
-// 비밀번호 일치 여부
 const pwCheckMsg = document.getElementById("pw-check-msg");
-const PW_CHECK_ERROR_MSG = {
+
+const ERROR_MSG = {
   required: "필수 정보입니다.",
-  invalid: "비밀번호가 일치하지 않습니다.",
+  invalidId: "5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.",
+  invalidPw: "8~16자 영문 대 소문자, 숫자를 사용하세요.",
+  invalidPwCheck: "비밀번호가 일치하지 않습니다.",
 };
 
-const checkPwCheckRegex = (value) => {
+const checkReg = (target) => {
+  const { value, id } = target;
   if (value.length === 0) {
     return "required";
   } else {
-    return pw.value === value ? true : "invalid";
+    switch (id) {
+      case "id":
+        return ID_REG.test(value) ? true : "invalidId";
+      case "pw":
+        return PW_REG.test(value) ? true : "invalidPw";
+      case "pw-check":
+        return pw.value === value ? true : "invalidPwCheck";
+    }
   }
 };
 
-const checkPwCheckValidation = (value) => {
-  const isValidPwCheck = checkPwCheckRegex(value);
-  if (isValidPwCheck !== true) {
-    pwCheck.classList.add("border-red-600");
-    pwCheckMsg.innerText = PW_CHECK_ERROR_MSG[isValidPwCheck];
+const checkValidation = (target, msgTarget) => {
+  const isValid = checkReg(target);
+  if (isValid !== true) {
+    target.classList.add("border-red-600");
+    msgTarget.innerText = ERROR_MSG[isValid];
   } else {
-    pwCheck.classList.remove("border-red-600");
-    pwCheckMsg.innerText = "";
+    target.classList.remove("border-red-600");
+    msgTarget.innerText = "";
   }
-  return isValidPwCheck;
+  return isValid;
 };
 
-pwCheck.addEventListener("focusout", (e) =>
-  checkPwCheckValidation(e.target.value)
+id.addEventListener("focusout", () => checkValidation(id, idMsg));
+pw.addEventListener("focusout", () => checkValidation(pw, pwMsg));
+pwCheck.addEventListener("focusout", () =>
+  checkValidation(pwCheck, pwCheckMsg)
 );
 
 /* -------------------------------------------- */
 // 요구사항 4
 /* -------------------------------------------- */
-// 가입 버튼 클릭
 const modal = document.getElementById("modal");
 
 const confirmId = document.getElementById("confirm-id");
@@ -130,9 +84,9 @@ const approveBtn = document.getElementById("approve-btn");
 submit.addEventListener("click", (e) => {
   e.preventDefault();
   const isValidForm =
-    checkIdValidation(id.value) === true &&
-    checkPwValidation(pw.value) === true &&
-    checkPwCheckValidation(pwCheck.value) === true;
+    checkValidation(id, idMsg) === true &&
+    checkValidation(pw, pwMsg) === true &&
+    checkValidation(pwCheck, pwCheckMsg) === true;
   if (isValidForm) {
     confirmId.innerText = id.value;
     confirmPw.innerText = pw.value;
@@ -167,26 +121,10 @@ const getHtmlFontSize = () => {
 
 increaseFontBtn.addEventListener("click", () => {
   onClickFontSizeControl("increase");
-  // const nextFontSize = getHtmlFontSize() + 1;
-  // html.style.fontSize = nextFontSize;
-  // if (nextFontSize >= MAX_FONT_SIZE) {
-  //   increaseFontBtn.disabled = true;
-  // }
-  // if (nextFontSize > MIN_FONT_SIZE) {
-  //   decreaseFontBtn.disabled = false;
-  // }
 });
 
 decreaseFontBtn.addEventListener("click", () => {
   onClickFontSizeControl("decrease");
-  // const nextFontSize = getHtmlFontSize() - 1;
-  // html.style.fontSize = nextFontSize;
-  // if (nextFontSize <= MIN_FONT_SIZE) {
-  //   decreaseFontBtn.disabled = true;
-  // }
-  // if (nextFontSize < MAX_FONT_SIZE) {
-  //   increaseFontBtn.disabled = false;
-  // }
 });
 
 const onClickFontSizeControl = (flag) => {
