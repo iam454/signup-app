@@ -149,3 +149,50 @@ approveBtn.addEventListener("click", () => {
   modal.close();
   // location.reload();
 });
+
+/* -------------------------------------------- */
+// 요구사항 5
+/* -------------------------------------------- */
+const increaseFontBtn = document.getElementById("increase-font-btn");
+const decreaseFontBtn = document.getElementById("decrease-font-btn");
+
+const MAX_FONT_SIZE = 20;
+const MIN_FONT_SIZE = 12;
+
+const html = document.documentElement;
+
+const getHtmlFontSize = () => {
+  return parseFloat(window.getComputedStyle(html).fontSize);
+};
+
+increaseFontBtn.addEventListener("click", () => {
+  onClickFontSizeControl("increase");
+  // const nextFontSize = getHtmlFontSize() + 1;
+  // html.style.fontSize = nextFontSize;
+  // if (nextFontSize >= MAX_FONT_SIZE) {
+  //   increaseFontBtn.disabled = true;
+  // }
+  // if (nextFontSize > MIN_FONT_SIZE) {
+  //   decreaseFontBtn.disabled = false;
+  // }
+});
+
+decreaseFontBtn.addEventListener("click", () => {
+  onClickFontSizeControl("decrease");
+  // const nextFontSize = getHtmlFontSize() - 1;
+  // html.style.fontSize = nextFontSize;
+  // if (nextFontSize <= MIN_FONT_SIZE) {
+  //   decreaseFontBtn.disabled = true;
+  // }
+  // if (nextFontSize < MAX_FONT_SIZE) {
+  //   increaseFontBtn.disabled = false;
+  // }
+});
+
+const onClickFontSizeControl = (flag) => {
+  const fontSize = getHtmlFontSize();
+  let newFontSize = flag === "increase" ? fontSize + 1 : fontSize - 1;
+  html.style.fontSize = newFontSize;
+  decreaseFontBtn.disabled = newFontSize <= MIN_FONT_SIZE;
+  increaseFontBtn.disabled = newFontSize >= MAX_FONT_SIZE;
+};
