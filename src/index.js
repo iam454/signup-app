@@ -31,11 +31,16 @@ const ID_ERROR_MSG = {
   invalid: "5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.",
 };
 
-const checkIdValidation = (value) => {
-  let isValidId = "required";
-  if (value) {
-    isValidId = ID_REG.test(value) ? true : "invalid";
+const checkIdRegex = (value) => {
+  if (value.length === 0) {
+    return "required";
+  } else {
+    return ID_REG.test(value) ? true : "invalid";
   }
+};
+
+const checkIdValidation = (value) => {
+  const isValidId = checkIdRegex(value);
   if (isValidId !== true) {
     id.classList.add("border-red-600");
     idMsg.innerText = ID_ERROR_MSG[isValidId];
@@ -43,6 +48,7 @@ const checkIdValidation = (value) => {
     id.classList.remove("border-red-600");
     idMsg.innerText = "";
   }
+  return isValidId;
 };
 
 id.addEventListener("focusout", (e) => checkIdValidation(e.target.value));
@@ -56,11 +62,16 @@ const PW_ERROR_MSG = {
   invalid: "8~16자 영문 대 소문자, 숫자를 사용하세요.",
 };
 
-const checkPwValidation = (value) => {
-  let isValidPw = "required";
-  if (value) {
-    isValidPw = PW_REG.test(value) ? true : "invalid";
+const checkPwRegex = (value) => {
+  if (value.length === 0) {
+    return "required";
+  } else {
+    return PW_REG.test(value) ? true : "invalid";
   }
+};
+
+const checkPwValidation = (value) => {
+  const isValidPw = checkPwRegex(value);
   if (isValidPw !== true) {
     pw.classList.add("border-red-600");
     pwMsg.innerText = PW_ERROR_MSG[isValidPw];
@@ -68,6 +79,7 @@ const checkPwValidation = (value) => {
     pw.classList.remove("border-red-600");
     pwMsg.innerText = "";
   }
+  return isValidPw;
 };
 
 pw.addEventListener("focusout", (e) => checkPwValidation(e.target.value));
@@ -79,11 +91,16 @@ const PW_CHECK_ERROR_MSG = {
   invalid: "비밀번호가 일치하지 않습니다.",
 };
 
-const checkPwCheckValidation = (value) => {
-  let isValidPwCheck = "required";
-  if (value) {
-    isValidPwCheck = pw.value === value ? true : "invalid";
+const checkPwCheckRegex = (value) => {
+  if (value.length === 0) {
+    return "required";
+  } else {
+    return pw.value === value ? true : "invalid";
   }
+};
+
+const checkPwCheckValidation = (value) => {
+  const isValidPwCheck = checkPwCheckRegex(value);
   if (isValidPwCheck !== true) {
     pwCheck.classList.add("border-red-600");
     pwCheckMsg.innerText = PW_CHECK_ERROR_MSG[isValidPwCheck];
@@ -91,16 +108,44 @@ const checkPwCheckValidation = (value) => {
     pwCheck.classList.remove("border-red-600");
     pwCheckMsg.innerText = "";
   }
+  return isValidPwCheck;
 };
 
 pwCheck.addEventListener("focusout", (e) =>
   checkPwCheckValidation(e.target.value)
 );
 
+/* -------------------------------------------- */
+// 요구사항 4
+/* -------------------------------------------- */
 // 가입 버튼 클릭
+const modal = document.getElementById("modal");
+
+const confirmId = document.getElementById("confirm-id");
+const confirmPw = document.getElementById("confirm-pw");
+
+const cancelBtn = document.getElementById("cancel-btn");
+const approveBtn = document.getElementById("approve-btn");
+
 submit.addEventListener("click", (e) => {
   e.preventDefault();
-  checkIdValidation(id.value);
-  checkPwValidation(pw.value);
-  checkPwCheckValidation(pwCheck.value);
+  const isValidForm =
+    checkIdValidation(id.value) === true &&
+    checkPwValidation(pw.value) === true &&
+    checkPwCheckValidation(pwCheck.value) === true;
+  if (isValidForm) {
+    confirmId.innerText = id.value;
+    confirmPw.innerText = pw.value;
+    modal.showModal();
+  }
+});
+
+cancelBtn.addEventListener("click", () => {
+  modal.close();
+});
+
+approveBtn.addEventListener("click", () => {
+  window.alert("가입되었습니다 🥳");
+  modal.close();
+  // location.reload();
 });
